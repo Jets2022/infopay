@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>infopay</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --success: #10b981;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 840px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.header h1 {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.card h2 {
+  font-size: 17px;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  cursor: pointer;
+  position: relative;
+  background: var(--card);
+  user-select: none;
+}
+
+.item:hover {
+  border-color: var(--muted);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.item.sel {
+  border: 2px solid var(--primary) !important;
+  background: var(--primary-light) !important;
+}
+
+.item-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.item.sel .item-title {
+  color: var(--primary);
+}
+
+.price {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 8px;
+  display: flex;
+  align-items: baseline;
+}
+
+.price span {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+.badge-chk {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  font-size: 18px;
+  color: var(--border);
+}
+.item.sel .badge-chk {
+  color: var(--primary);
+}
+
+.slide-panel {
+  display: none;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.slide-panel.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.input-group {
+  position: relative;
+}
+
+.input-group i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+}
+
+input {
+  width: 100%;
+  padding: 14px 14px 14px 42px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  font-size: 15px;
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-light);
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pay-opt {
+  flex: 1;
+  min-width: 140px;
+  text-align: center;
+  padding: 16px;
+  font-weight: 500;
+}
+
+#card-fields {
+  display: none;
+  margin-top: 16px;
+}
+
+#card-fields input {
+  padding-left: 14px;
+  margin-bottom: 12px;
+}
+
+.summary-box {
+  background: linear-gradient(145deg, #ffffff, #fdfdfd);
+  border-left: 4px solid var(--primary);
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.summary-line span {
+  color: var(--muted);
+}
+
+.summary-line strong {
+  color: var(--text);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 16px 0;
+}
+
+button {
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+button:hover {
+  background: var(--primary-hover);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--muted);
+}
+
+.success {
+  border-top: 4px solid var(--success);
+  text-align: center;
+}
+
+.success-icon {
+  width: 56px;
+  height: 56px;
+  background: #ecfdf5;
+  color: var(--success);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 20px;
+}
+
+.pwd-container {
+  background: var(--bg);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  margin: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  width: auto;
+  font-size: 14px;
+}
+
+.btn-secondary:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+  display: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="header">
+    <h1>解锁全面能力</h1>
+    <p style="color: var(--muted)">选择适合您的订阅计划与全能工具箱</p>
+  </div>
+
+  <div class="card">
+    <h2><i class="ti ti-apps"></i> 1. 选择你的订阅计划</h2>
+    <div class="grid">
+      <div class="item" id="prod0" onclick="selProd(0, 100, 'ChatGPT Plus', '1 个月')">
+        <div class="item-title"><i class="ti ti-message-chatbot" style="color: #10a37f;"></i> ChatGPT Plus</div>
+        <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">智能对话与创作</div>
+        <div class="price">¥100<span>/1个月</span></div>
+      </div>
+      
+      <div class="item" id="prod1" onclick="selProd(1, 80, 'Gemini', '1 年')">
+        <div class="item-title"><i class="ti ti-sparkles" style="color: #1a73e8;"></i> Gemini</div>
+        <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">多模态高效助手</div>
+        <div class="price">¥80<span>/1年</span></div>
+      </div>
+      
+      <div class="item" id="prod2" onclick="selProd(2, 250, 'Claude pro (成品号)', '1 个月')">
+        <div class="item-title"><i class="ti ti-brain" style="color: #d97706;"></i> Claude pro (成品号)</div>
+        <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">发货即用，省心独享</div>
+        <div class="price">¥250<span>/1个月</span></div>
+      </div>
+
+      <div class="item" id="prod3" onclick="selProd(3, 220, 'Claude pro', '1 个月')">
+        <div class="item-title"><i class="ti ti-user-check" style="color: #b45309;"></i> Claude pro</div>
+        <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">正版订阅，专业创作</div>
+        <div class="price">¥220<span>/1个月</span></div>
+      </div>
+      
+      <div class="item" id="prod4" onclick="selProd(4, 200, 'Gork super (可改密码)', '1 个月')">
+        <div class="item-title"><i class="ti ti-lock-open" style="color: #ea4335;"></i> Gork super (可改密码)</div>
+        <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">独立车位，支持改密</div>
+        <div class="price">¥200<span>/1个月</span></div>
+      </div>
+      
+      <div class="item" id="prod5" onclick="selProd(5, 100, 'Gork super', '1 个月')">
+        <div class="item-title"><i class="ti ti-ghost" style="color: #34a853;"></i> Gork super</div>
+        <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">标准独享，快速稳定</div>
+        <div class="price">¥100<span>/1个月</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><i class="ti ti-users"></i> 2. 拼车栏目</h2>
+    <div class="grid" style="grid-template-columns: 1fr;">
+      <div class="item" id="tool-lovart" onclick="toggleLovart()">
+        <div class="badge-chk" id="lovart-chk-icon"><i class="ti ti-square"></i></div>
+        <div class="item-title"><i class="ti ti-car" style="color: #7c3aed;"></i> Lovart</div>
+        <div style="font-size: 13px; color: var(--muted); margin-top: 4px; padding-right: 30px;">
+          选择加入 Lovart 高性能拼车车位，共享顶尖算力面板
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card slide-panel" id="lovart-duration-panel">
+    <h2><i class="ti ti-id-badge"></i> 2-1. 选择 Lovart 会员等级</h2>
+    <div class="grid">
+      <div class="item" id="ldur0" onclick="selLovartDur(0, 275, 'Pro会员', '5500积分')">
+        <div class="item-title">Pro会员</div>
+        <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">内含 5500 积分</div>
+        <div class="price">¥275<span>/1个月</span></div>
+      </div>
+      <div class="item" id="ldur1" onclick="selLovartDur(1, 288, 'Ultimate会员', '6750积分')">
+        <div class="item-title">Ultimate会员</div>
+        <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">内含 6750 积分</div>
+        <div class="price">¥288<span>/1个月</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><i class="ti ti-tools"></i> 3. 选择你的工具</h2>
+    <div class="grid" style="grid-template-columns: 1fr;">
+      <div class="item" id="tool-vpn" onclick="toggleVpn()">
+        <div class="badge-chk" id="vpn-chk-icon"><i class="ti ti-square"></i></div>
+        <div class="item-title"><i class="ti ti-shield-lock" style="color: #f59e0b;"></i> VPN</div>
+        <div style="font-size: 13px; color: var(--muted); margin-top: 4px; padding-right: 30px;">
+          URL 订阅地址，搭配 <strong>Shadowrocket</strong> 或 <strong>Clash</strong> 使用
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card slide-panel" id="vpn-duration-panel">
+    <h2><i class="ti ti-calendar-time"></i> 3-1. 选择 VPN 订阅时长</h2>
+    <div class="grid">
+      <div class="item" id="vdur0" onclick="selVpnDur(0, 20, '1 个月')">
+        <div class="item-title">1 个月</div>
+        <div class="price">¥20</div>
+      </div>
+      <div class="item" id="vdur1" onclick="selVpnDur(1, 150, '1 年')">
+        <div class="item-title">1 年</div>
+        <div class="price">¥150</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><i class="ti ti-user"></i> 4. 接收账号邮箱</h2>
+    <div class="input-group">
+      <i class="ti ti-mail"></i>
+      <input type="email" id="uemail" placeholder="example@email.com" required>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><i class="ti ti-credit-card"></i> 5. 支付方式</h2>
+    <div class="row">
+      <div class="item pay-opt sel" id="pm0" onclick="selPay(0)">
+        <i class="ti ti-brand-alipay" style="color:#1677ff"></i> 支付宝
+      </div>
+      <div class="item pay-opt" id="pm1" onclick="selPay(1)">
+        <i class="ti ti-brand-wechat" style="color:#07c160"></i> 微信支付
+      </div>
+      <div class="item pay-opt" id="pm2" onclick="selPay(2)">
+        <i class="ti ti-credit-card"></i> 银行卡
+      </div>
+    </div>
+
+    <div id="card-fields">
+      <input type="text" placeholder="银行卡号" maxlength="19">
+      <input type="text" placeholder="持卡人姓名">
+    </div>
+  </div>
+
+  <div class="card summary-box">
+    <h2>6. 订单摘要</h2>
+    <div class="summary-line">
+      <span>所选计划</span>
+      <strong id="sum-prod">未选择</strong>
+    </div>
+    <div class="summary-line" id="sum-lovart-row" style="display: none;">
+      <span>拼车服务</span>
+      <strong id="sum-lovart-val">未选择</strong>
+    </div>
+    <div class="summary-line" id="sum-vpn-row" style="display: none;">
+      <span>附加工具</span>
+      <strong id="sum-vpn-val">未选择</strong>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <div class="summary-line" style="align-items: center; margin-bottom: 20px;">
+      <span style="font-size: 16px; font-weight: 600; color: var(--text)">应付总额</span>
+      <strong id="sum-total" style="font-size: 24px; color: var(--text)">¥0</strong>
+    </div>
+
+    <button id="pay-btn" onclick="doPay()" disabled>
+      <div class="spinner" id="pay-spinner"></div>
+      <span id="pay-btn-text">请选择商品</span>
+    </button>
+  </div>
+
+  <div class="card success" id="success-box" style="display:none">
+    <div class="success-icon">
+      <i class="ti ti-check"></i>
+    </div>
+    <h2 style="justify-content: center; margin-bottom: 8px;">7. 支付成功</h2>
+    <p style="color: var(--muted); margin-bottom: 24px;" id="acct-plan"></p>
+    
+    <div class="summary-line" style="max-width: 300px; margin: 0 auto 8px;">
+      <span>有效至</span>
+      <strong id="acct-exp">-</strong>
+    </div>
+    <div class="summary-line" style="max-width: 300px; margin: 0 auto 24px;">
+      <span>服务状态</span>
+      <strong id="prog-label" style="color: var(--success)">-</strong>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="text-align: left; max-width: 480px; margin: 0 auto;">
+      <label style="font-size: 13px; color: var(--muted); font-weight: 500;">系统为您生成的独享登录入口</label>
+      <div class="pwd-container">
+        <a href="https://app.example.com/login" target="_blank" style="color: var(--primary); font-size: 14px; text-decoration: none; font-weight: 500;">
+          https://app.example.com/login <i class="ti ti-external-link"></i>
+        </a>
+      </div>
+
+      <label style="font-size: 13px; color: var(--muted); font-weight: 500;">演示初始密码</label>
+      <div class="pwd-container">
+        <span id="pwd-txt" style="font-family: monospace; font-size: 16px; letter-spacing: 3px; font-weight: 600;">••••••••</span>
+        <div class="action-btns">
+          <button class="btn-secondary" id="pwd-eye" onclick="togglePwd()">
+            <i class="ti ti-eye"></i>
+          </button>
+          <button class="btn-secondary" id="copy-btn" onclick="cp('Acc@Pr0#2026','copy-btn')">
+            <i class="ti ti-copy"></i> 复制
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// 全局状态管理
+let selectedProdIdx = null; 
+let prodPrice = 0;
+let prodName = "";
+let prodDur = "";
+
+let lovartSelected = false;
+let selectedLovartDurIdx = null; 
+let lovartPrice = 0;
+let lovartLevel = "";
+let lovartPoints = "";
+
+let vpnSelected = false;
+let selectedVpnDurIdx = null; 
+let vpnPrice = 0;
+let vpnDurLabel = "";
+
+// 1. 切换主订阅计划
+function selProd(idx, price, name, duration) {
+  if (selectedProdIdx === idx) {
+    selectedProdIdx = null;
+    prodPrice = 0;
+    prodName = "";
+    prodDur = "";
+    document.getElementById('prod' + idx).classList.remove('sel');
+  } else {
+    selectedProdIdx = idx;
+    prodPrice = price;
+    prodName = name;
+    prodDur = duration;
+    for (let j = 0; j < 6; j++) {
+      document.getElementById('prod' + j).classList.toggle('sel', j === idx);
+    }
+  }
+  updateSummary();
+}
+
+// 2. 联动逻辑：点击 Lovart 展开/折叠面板
+function toggleLovart() {
+  lovartSelected = !lovartSelected;
+  
+  const card = document.getElementById('tool-lovart');
+  const iconBox = document.getElementById('lovart-chk-icon');
+  const panel = document.getElementById('lovart-duration-panel');
+  const row = document.getElementById('sum-lovart-row');
+
+  if (lovartSelected) {
+    card.classList.add('sel');
+    iconBox.innerHTML = '<i class="ti ti-checkbox"></i>';
+    panel.classList.add('show');
+    row.style.display = 'flex';
+    selLovartDur(0, 275, 'Pro会员', '5500积分');
+  } else {
+    card.classList.remove('sel');
+    iconBox.innerHTML = '<i class="ti ti-square"></i>';
+    panel.classList.remove('show');
+    row.style.display = 'none';
+    
+    selectedLovartDurIdx = null;
+    lovartPrice = 0;
+    for (let j = 0; j < 2; j++) {
+      document.getElementById('ldur' + j).classList.remove('sel');
+    }
+  }
+  updateSummary();
+}
+
+// 2-1. 切换 Lovart 的会员等级
+function selLovartDur(idx, price, level, points) {
+  if (selectedLovartDurIdx === idx) {
+    selectedLovartDurIdx = null;
+    lovartPrice = 0;
+    lovartLevel = "";
+    lovartPoints = "";
+    document.getElementById('ldur' + idx).classList.remove('sel');
+  } else {
+    selectedLovartDurIdx = idx;
+    lovartPrice = price;
+    lovartLevel = level;
+    lovartPoints = points;
+    for (let j = 0; j < 2; j++) {
+      document.getElementById('ldur' + j).classList.toggle('sel', j === idx);
+    }
+  }
+  updateSummary();
+}
+
+// 3. 联动逻辑：点击 VPN 展开/收起配置
+function toggleVpn() {
+  vpnSelected = !vpnSelected;
+  
+  const vpnCard = document.getElementById('tool-vpn');
+  const iconBox = document.getElementById('vpn-chk-icon');
+  const durationPanel = document.getElementById('vpn-duration-panel');
+  const sumVpnRow = document.getElementById('sum-vpn-row');
+
+  if (vpnSelected) {
+    vpnCard.classList.add('sel');
+    iconBox.innerHTML = '<i class="ti ti-checkbox"></i>';
+    durationPanel.classList.add('show');
+    sumVpnRow.style.display = 'flex';
+    selVpnDur(0, 20, '1 个月');
+  } else {
+    vpnCard.classList.remove('sel');
+    iconBox.innerHTML = '<i class="ti ti-square"></i>';
+    durationPanel.classList.remove('show');
+    sumVpnRow.style.display = 'none';
+    
+    selectedVpnDurIdx = null;
+    vpnPrice = 0;
+    for (let j = 0; j < 2; j++) {
+      document.getElementById('vdur' + j).classList.remove('sel');
+    }
+  }
+  updateSummary();
+}
+
+// 3-1. 切换 VPN 的时长选项
+function selVpnDur(idx, price, duration) {
+  if (selectedVpnDurIdx === idx) {
+    selectedVpnDurIdx = null;
+    vpnPrice = 0;
+    vpnDurLabel = "";
+    document.getElementById('vdur' + idx).classList.remove('sel');
+  } else {
+    selectedVpnDurIdx = idx;
+    vpnPrice = price;
+    vpnDurLabel = duration;
+    for (let j = 0; j < 2; j++) {
+      document.getElementById('vdur' + j).classList.toggle('sel', j === idx);
+    }
+  }
+  updateSummary();
+}
+
+// 更新数据总揽面板与计价
+function updateSummary() {
+  let totalPrice = 0;
+  
+  if (selectedProdIdx !== null) {
+    totalPrice += prodPrice;
+    document.getElementById('sum-prod').textContent = prodName + ' (' + prodDur + ')';
+  } else {
+    document.getElementById('sum-prod').textContent = '未选择';
+  }
+  
+  if (lovartSelected && selectedLovartDurIdx !== null) {
+    totalPrice += lovartPrice;
+    document.getElementById('sum-lovart-val').textContent = 'Lovart (' + lovartLevel + ' · ' + lovartPoints + ') · ¥' + lovartPrice;
+    document.getElementById('sum-lovart-row').style.display = 'flex';
+  } else {
+    document.getElementById('sum-lovart-row').style.display = 'none';
+  }
+
+  if (vpnSelected && selectedVpnDurIdx !== null) {
+    totalPrice += vpnPrice;
+    document.getElementById('sum-vpn-val').textContent = 'VPN (' + vpnDurLabel + ') · ¥' + vpnPrice;
+    document.getElementById('sum-vpn-row').style.display = 'flex';
+  } else {
+    document.getElementById('sum-vpn-row').style.display = 'none';
+  }
+
+  document.getElementById('sum-total').textContent = '¥' + totalPrice;
+  
+  const payBtn = document.getElementById('pay-btn');
+  const payBtnText = document.getElementById('pay-btn-text');
+  
+  if (totalPrice > 0) {
+    payBtn.disabled = false;
+    payBtnText.textContent = '确认支付 ¥' + totalPrice;
+  } else {
+    payBtn.disabled = true;
+    payBtnText.textContent = '请选择商品';
+  }
+}
+
+// 5. 切换支付渠道
+function selPay(i) {
+  for (let j = 0; j < 3; j++) {
+    document.getElementById('pm' + j).classList.toggle('sel', j === i);
+  }
+  document.getElementById('card-fields').style.display = (i === 2) ? 'block' : 'none';
+}
+
+// 模拟支付提交逻辑
+function doPay() {
+  const emailInput = document.getElementById('uemail');
+  if (!emailInput.value || !emailInput.checkValidity()) {
+    alert('请输入有效的接收账号邮箱。');
+    emailInput.focus();
+    return;
+  }
+
+  let totalPrice = prodPrice + (lovartSelected ? lovartPrice : 0) + (vpnSelected ? vpnPrice : 0);
+  if (totalPrice <= 0) return;
+
+  const btn = document.getElementById('pay-btn');
+  const spinner = document.getElementById('pay-spinner');
+  const btnText = document.getElementById('pay-btn-text');
+
+  spinner.style.display = 'block';
+  btnText.textContent = '安全支付 environment 构建中…';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const exp = new Date();
+    exp.setMonth(exp.getMonth() + 1);
+
+    let itemsArr = [];
+    if (selectedProdIdx !== null) itemsArr.push(prodName);
+    if (lovartSelected && selectedLovartDurIdx !== null) itemsArr.push('Lovart(' + lovartLevel + ')');
+    if (vpnSelected && selectedVpnDurIdx !== null) itemsArr.push('VPN(' + vpnDurLabel + ')');
+
+    document.getElementById('acct-plan').textContent = itemsArr.join(' + ');
+    document.getElementById('acct-exp').textContent = exp.toLocaleDateString('zh-CN', {year: 'numeric', month: 'long', day: 'numeric'});
+    document.getElementById('prog-label').textContent = '有效 (服务已开通)';
+
+    const successBox = document.getElementById('success-box');
+    successBox.style.display = 'block';
+
+    spinner.style.display = 'none';
+    btnText.textContent = '确认支付 ¥' + totalPrice;
+    btn.disabled = false;
+
+    setTimeout(() => {
+      successBox.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 100);
+
+  }, 1400);
+}
+
+let pwdShown = false;
+function togglePwd() {
+  pwdShown = !pwdShown;
+  const el = document.getElementById('pwd-txt');
+  el.textContent = pwdShown ? 'Acc@Pr0#2026' : '••••••••';
+  el.style.letterSpacing = pwdShown ? 'normal' : '3px';
+  document.getElementById('pwd-eye').innerHTML = pwdShown ? '<i class="ti ti-eye-off"></i>' : '<i class="ti ti-eye"></i>';
+}
+
+function cp(text, btnId) {
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById(btnId);
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="ti ti-check"></i> 已复制';
+    setTimeout(() => { btn.innerHTML = orig; }, 2000);
+  }).catch(() => {
+    alert('复制失败，请手动长按复制。');
+  });
+}
+</script>
+
+</body>
+</html>
